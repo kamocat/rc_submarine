@@ -1,12 +1,15 @@
 import asyncio
-from fastapi import FastAPI, Response
-from fastapi.responses import StreamingResponse
+from fastapi import FastAPI, Response, Request
+from fastapi.responses import StreamingResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 import cv2
 import threading
 from typing import AsyncGenerator
 from contextlib import asynccontextmanager
 import uvicorn
 from typing import Optional, Union
+from pydantic import BaseModel
 
 
 @asynccontextmanager
@@ -23,7 +26,8 @@ async def lifespan(app: FastAPI):
         print("Camera resource released.")
 
 app = FastAPI(lifespan=lifespan)
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
 class Camera:
     """
@@ -117,6 +121,21 @@ async def snapshot() -> Response:
     else:
         return Response(status_code=404, content="Camera frame not available.")
 
+@app.get("/")
+async def root(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse(
+            request=request, name="base.html"
+    )
+
+class JoystickPosition(BaseModel):
+    x: float
+    y: float
+    speed: float
+    angle: float
+
+@app.post("/joystick")
+async def joystick(pos:JoystickPosition):
+    print(pos)
 
 async def main():
     """

@@ -1,0 +1,28 @@
+<html><head><title>RC control</title></head>
+<style>
+body {
+	overflow: hidden;
+	position: fixed;
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif ;
+	color:rgb(128, 128, 128);
+	font-size: xx-large;
+}
+.coords {
+	text-align: center;
+}
+.feed {
+	max-width: 100%;
+}
+</style>
+<body scroll="no">
+	<img src="/video" class="feed">
+<p class="coords" >
+        X: <span id="x_coordinate"> </span>
+        Y: <span id="y_coordinate"> </span>
+        Speed: <span id="speed"> </span> %
+        Angle: <span id="angle"> </span>
+    </p>
+    <canvas id="canvas" ></canvas>
+    <script src="/static/joystick.js"></script>
+</body>
+</html>
