@@ -36,7 +36,12 @@ class Camera:
 
         :param camera_index: Index of the camera to use.
         """
-        self.cap = cv2.VideoCapture(url)
+        self.cap = cv2.VideoCapture(url, cv2.CAP_V4L2)
+        self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M','J','P','G'))
+        width=1920
+        height=1080
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
         self.lock = threading.Lock()
 
     def get_frame(self) -> bytes:
@@ -125,10 +130,10 @@ async def main():
 
 if __name__ == '__main__':
     # Usage example: Streaming default camera for local webcam:
-    camera = Camera()
+    # camera = Camera()
 
     # Usage example: Streaming the camera for a specific camera index:
-    # camera = Camera(0)
+    camera = Camera(0)
 
     # Usage example 3: Streaming an IP camera:
     # camera = Camera('rtsp://user:password@ip_address:port/')
