@@ -1,4 +1,4 @@
-fastapi
-opencv-python
-typing
-uvicorn
+fastapi>=0.116
+opencv-python-headless
+pydantic>=2.11
+uvicorn>=0.34
