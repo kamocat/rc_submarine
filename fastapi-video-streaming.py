@@ -1,5 +1,5 @@
 import asyncio
-from fastapi import FastAPI, Response, Request
+from fastapi import FastAPI, Response, Request, WebSocket
 from fastapi.responses import StreamingResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 import uvicorn
 from typing import Optional, Union
 from pydantic import BaseModel
+import json
 
 
 @asynccontextmanager
@@ -133,9 +134,16 @@ class JoystickPosition(BaseModel):
     speed: float
     angle: float
 
-@app.post("/joystick")
-async def joystick(pos:JoystickPosition):
-    print(pos)
+@app.websocket("/joystick")
+async def joystick(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        try:
+            data = json.loads(data)
+            print(data)
+        except Exception as e:
+            print(e)
 
 async def main():
     """

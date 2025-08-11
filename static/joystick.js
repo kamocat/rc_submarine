@@ -1,4 +1,16 @@
 //From https://www.instructables.com/Making-a-Joystick-With-HTML-pure-JavaScript/
+ var connection = new WebSocket("ws://" + location.host + "/joystick");
+connection.onopen = function () {
+    connection.send({'connect_time': new Date()});
+};
+connection.onerror = function (error) {
+    console.log('WebSocket Error ', error);
+    alert('WebSocket Error ', error);
+};
+connection.onmessage = function (e) {
+    console.log('Server: ', e.data);
+};
+
 function send(x, y, speed, angle) {
     var data = {
         "x": x,
@@ -7,13 +19,8 @@ function send(x, y, speed, angle) {
         "angle": angle
     };
     data = JSON.stringify(data);
-    fetch("/joystick", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-	    body: data
-    })
+    console.log(data);
+    connection.send(data);
 }
 
 var canvas, ctx;
@@ -116,7 +123,7 @@ function stopDrawing() {
     document.getElementById("y_coordinate").innerText = 0;
     document.getElementById("speed").innerText = 0;
     document.getElementById("angle").innerText = 0;
-
+    send(0,0,0,0);
 }
 
 function Draw(event) {
